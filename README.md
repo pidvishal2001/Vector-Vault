@@ -181,19 +181,6 @@ python v6_8.py
 
 ---
 
-# 🎨 Supported Color Models (GitHub Markdown Demo)
-
-The default light background is `#ffffff`  
-Dark mode background is `#000000`
-
-Example brand color:
-
-- HEX: `#0969DA`
-- RGB: `rgb(9, 105, 218)`
-- HSL: `hsl(212, 92%, 45%)`
-
----
-
 # ⚖️ License & Disclaimer
 
 > This software is provided for educational and personal data management purposes.
@@ -228,4 +215,3 @@ Always maintain backups of:
 **Vector Vault v6.8** is designed to demonstrate how cryptography, compression, and steganography can work together inside modern file formats.
 
 <ins>Use responsibly.</ins>  
-This is <sup>powerful</sup> technology.
