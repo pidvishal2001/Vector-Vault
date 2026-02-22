@@ -1,164 +1,231 @@
-**🛡️ Vector Vault v6.8: High-Density Binary-to-SVG Storage**
+# 🛡️ Vector Vault v6.8
+## High-Density Binary-to-SVG Storage
 
-Vector Vault is a sophisticated data security and steganography tool that transforms any file type (EXE, PDF, MP3, etc.) into a series of encrypted, high-density SVG (Scalable Vector Graphics) segments. By leveraging the power of Python's multithreading and the AES-256 standard, it provides a unique way to store and transfer sensitive data in plain sight.
+**Vector Vault** is a sophisticated data security and steganography tool that transforms *any file type* (EXE, PDF, MP3, ZIP, etc.) into encrypted, high-density SVG (Scalable Vector Graphics) segments.
 
+> Store sensitive data in plain sight — inside valid SVG files.
 
+It combines **AES-256 encryption**, multithreading, compression, and pixel-based binary mapping into a single powerful system.
 
-**🚀 Core Features**
+---
 
-Multithreaded Processing: Large files are processed in background threads, keeping the GUI responsive and eliminating "Not Responding" errors.
+# 🚀 Core Features
 
+## ⚡ Multithreaded Processing
 
+Large files are processed in background threads, keeping the GUI responsive and preventing ~~Not Responding~~ errors.
 
-Recursive DNA Metadata: Every SVG segment carries an internal "DNA" tag containing the original filename, segment ID, and encryption salt for automatic reassembly.
+---
 
+## 🧬 Recursive DNA Metadata
 
+Every SVG segment contains an internal **DNA tag** storing:
 
-Dual Security Layers:
+- Original filename  
+- Segment ID  
+- Encryption salt  
 
+This allows automatic reassembly even if filenames are randomized.
 
+Example:
 
-AES-256 Encryption: Industry-standard protection via the Fernet protocol.
+```xml
+<desc id="VAULT_DNA">
+eyJ0IjogInBob3RvLmpwZyIsICJpZCI6IDAsICJtIjogInBhc3N3b3JkIiwgInMiOiA...
+</desc>
+```
 
+---
 
+## 🔐 Dual Security Layers
 
-Steganographic Cloaking: Data is hidden within valid XML tags (<desc>) and pixelated PNG data inside the SVG.
+### 1️⃣ AES-256 Encryption
 
+Uses **PBKDF2HMAC** with 100,000 iterations and Fernet (AES-256 under the hood).
 
+This makes brute-force attacks computationally expensive.
 
-Flexible Storage Options: Choose between saving to the source directory or a custom, hidden location.
+Key derivation flow:
 
+```
+Password → PBKDF2HMAC → 100,000 iterations → AES-256 Key → Fernet Encryption
+```
 
+---
 
-Lossless Compression: Uses LZMA (High) or Zlib (Fast) to ensure bit-perfect restoration after reconstruction.
+### 2️⃣ Steganographic Cloaking
 
+Encrypted data is hidden inside:
 
+- Valid XML `<desc>` tags  
+- Pixel-encoded PNG data embedded within SVG  
 
-🛠️ Technical Architecture
+Each pixel stores **3 bytes** of raw binary:
 
-1\. The DNA Header
+| Channel | Stores |
+|---------|--------|
+| 🔴 Red   | Byte 1 |
+| 🟢 Green | Byte 2 |
+| 🔵 Blue  | Byte 3 |
 
-Every generated SVG is a valid XML file. Within the <desc> tag, Vector Vault hides a Base64-encoded JSON manifest:
+---
 
+## 📦 Lossless Compression
 
+Choose between:
 
-XML
+- **LZMA** (High Compression)
+- **Zlib** (Fast Compression)
 
+Ensures ***bit-perfect*** restoration after reconstruction.
 
+---
 
-<desc id="VAULT\_DNA">eyJ0IjogInBob3RvLmpwZyIsICJpZCI6IDAsICJtIjogInBhc3N3b3JkIiwgInMiOiA...</desc>
+# 🛠️ Technical Architecture
 
-This manifest allows the Batch Unlock tool to sort and stitch segments even if filenames are randomized.
+## 1️⃣ DNA Header System
 
+Every generated SVG is a valid XML file.
 
+Inside the `<desc>` tag, a Base64-encoded JSON manifest is embedded.
 
-2\. Binary-to-Pixel Mapping
+This enables:
 
-Data is mapped directly to RGB pixel values. Each pixel stores 3 bytes of raw binary data.
+- Segment sorting  
+- Integrity validation  
+- Automatic stitching  
 
+---
 
+## 2️⃣ Binary-to-Pixel Mapping
 
-Red: Byte 1
+Raw binary is mapped directly into RGB pixel values.
 
+This allows extremely dense storage inside image data without breaking SVG validity.
 
+---
 
-Green: Byte 2
+## 3️⃣ Encryption Details
 
+- Algorithm: **AES-256**
+- KDF: `PBKDF2HMAC`
+- Iterations: 100,000
+- Salt: Random per session
+- Protocol: `Fernet`
 
+Security strength increases with stronger passwords or keyfiles.
 
-Blue: Byte 3
+---
 
+# 📦 Installation & Setup
 
+## 1️⃣ Clone Repository
 
-3\. Encryption Standard
+Use `git clone` to download the project:
 
-The system uses PBKDF2HMAC with 100,000 iterations for key derivation, making brute-force attacks on passwords computationally expensive.
-
-
-
-📦 Installation \& Setup
-
-Clone the Repository:
-
-
-
-Bash
-
-
-
+```bash
 git clone https://github.com/pidvishal2001/Vector-Vault.git
-
 cd Vector-Vault
+```
 
-Install Dependencies:
+---
 
-Vector Vault requires Pillow for image processing and Cryptography for security.
+## 2️⃣ Install Dependencies
 
+Vector Vault requires:
 
+- Pillow
+- cryptography
 
-Bash
-
-
-
+```bash
 pip install -r requirements.txt
+```
 
-Run the Application:
+---
 
+## 3️⃣ Run Application
 
-
-Bash
-
-
-
+```bash
 python v6_8.py
+```
 
-**📖 How to Use**
+---
 
-Locking a File
+# 📖 How To Use
 
-Select a File: Click the "Lock" button and choose any file.
+## 🔒 Locking a File
 
+1. Click **Lock**
+2. Select a file
+3. Choose security mode:
+   - **None** → Direct encoding  
+   - **Password** → Standard protection  
+   - **Keyfile** → Use an image or file as mathematical key  
+4. Choose destination:
+   - Source Directory  
+   - Custom Location  
+5. Start process  
+6. Monitor real-time progress bar  
 
+---
 
-Choose Security:
+## 🔓 Unlocking a Folder
 
+1. Click **Unlock**
+2. Select folder containing SVG segments
+3. Tool scans DNA metadata
+4. Segments are validated and stitched
+5. Restored file appears as:
 
+`RECOVERED_[OriginalName]`
 
-None: Direct encoding.
+---
 
+# 🎨 Supported Color Models (GitHub Markdown Demo)
 
+The default light background is `#ffffff`  
+Dark mode background is `#000000`
 
-Password: Standard passphrase protection.
+Example brand color:
 
+- HEX: `#0969DA`
+- RGB: `rgb(9, 105, 218)`
+- HSL: `hsl(212, 92%, 45%)`
 
+---
 
-Keyfile: Use an image or any other file as a unique mathematical key.
+# ⚖️ License & Disclaimer
 
+> This software is provided for educational and personal data management purposes.
 
+The developers are **not responsible** for:
 
-Set Destination: Choose "Source Directory" or browse for a "Custom Location".
+- Data loss  
+- Misuse  
+- Lost passwords  
+- Lost keyfiles  
 
+Always maintain backups of:
 
+- Original files  
+- Passwords  
+- Keyfiles  
 
-Process: The progress bar will track the encoding in real-time.
+---
 
+# ⭐ Why Vector Vault?
 
+✔ Stores sensitive data inside standard SVG files  
+✔ Dual-layer encryption + steganography  
+✔ Lossless reconstruction  
+✔ Multithreaded architecture  
+✔ High-density binary mapping  
 
-Unlocking a Folder
+---
 
-Select Folder: Click "Unlock" and select the folder containing your SVG segments.
+## 🧠 Final Note
 
+**Vector Vault v6.8** is designed to demonstrate how cryptography, compression, and steganography can work together inside modern file formats.
 
-
-Verification: The tool scans the "DNA" of every file to ensure the sequence is correct.
-
-
-
-Restore: The original file is reconstructed as RECOVERED\_\[OriginalName].
-
-
-
-**⚖️ License \& Disclaimer**
-
-This software is provided for educational and personal data management purposes. The developers are not responsible for any data loss or misuse. Always maintain a backup of your original keys and keyfiles.
-
+<ins>Use responsibly.</ins>  
+This is <sup>powerful</sup> technology.
